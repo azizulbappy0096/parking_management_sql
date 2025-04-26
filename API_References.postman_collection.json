@@ -1,0 +1,296 @@
+{
+	"info": {
+		"_postman_id": "70f312c3-fa07-480f-bf63-1ff3494bf068",
+		"name": "API_References",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12684597",
+		"_collection_link": "https://www.postman.com/grey-comet-14276/workspace/parking-management/collection/12684597-70f312c3-fa07-480f-bf63-1ff3494bf068?action=share&source=collection_link&creator=12684597"
+	},
+	"item": [
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Manager 2\",\r\n    \"email\": \"maneger2@example.com\",\r\n    \"password\": \"123456\",\r\n    \"address\": \"123 Cherry Lane\",\r\n    \"phone_num\": \"555-1234\",\r\n    \"role\": \"manager\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_managers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/managers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"managers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "parking",
+			"item": [
+				{
+					"name": "spaces",
+					"item": [
+						{
+							"name": "create_space",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"space_address\": \"Some address\",\r\n    \"space_type\": \"west_side\",\r\n    \"mngr_id\": 1,\r\n    \"hourly_rate\": 10\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/parking/spaces/create",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"parking",
+										"spaces",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update_space",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"space_type\": \"north_side\",\r\n    \"mngr_id\": 9\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/parking/spaces/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"parking",
+										"spaces",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete_space",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/parking/spaces/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"parking",
+										"spaces",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/parking/spaces",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"parking",
+										"spaces"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "spots",
+					"item": [
+						{
+							"name": "create_spot",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"spot_name\": \"2A\",\r\n    \"space_id\": 2\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/parking/spots/create",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"parking",
+										"spots",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update_spot",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"spot_name\": \"2A\",\r\n    \"space_id\": 2,\r\n    \"spot_status\": \"occupied\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/parking/spots/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"parking",
+										"spots",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete_spot",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/parking/spots/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"parking",
+										"spots",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/parking/spots",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"parking",
+										"spots"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
