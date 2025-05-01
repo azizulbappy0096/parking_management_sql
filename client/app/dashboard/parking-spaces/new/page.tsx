@@ -23,8 +23,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useGlobalContext } from "@/components/GlobalContext";
 
 export default function NewParkingSpacePage() {
+  const { user } = useGlobalContext();
+
   const [formData, setFormData] = useState({
     space_address: "",
     space_type: "",

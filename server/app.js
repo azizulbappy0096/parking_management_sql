@@ -17,6 +17,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/users", require("./routes/user.route"));
 app.use("/api/parking", require("./routes/parking.route"));
+app.use("/api/slips", require("./routes/slip.route"));
+app.use("/api/general", require("./routes/general.route"));
 
 // catch and forward to error handler
 app.use((err, req, res, next) => {

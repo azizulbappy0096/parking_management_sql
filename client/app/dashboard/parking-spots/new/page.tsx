@@ -2,7 +2,6 @@
 
 import type React from "react";
 import services from "@/services";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -23,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "react-toastify";
 
 export default function NewParkingSpotPage() {
   const [formData, setFormData] = useState({
@@ -33,7 +32,6 @@ export default function NewParkingSpotPage() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { toast } = useToast();
 
   const [parkingSpaces, setParkingSpaces] = useState<
     {
@@ -57,12 +55,8 @@ export default function NewParkingSpotPage() {
         const response = await services.parkingServices.getAllParkingSpaces();
         setParkingSpaces(response.data.spaces);
       } catch (error) {
-        console.error("Error fetching managers:", error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch managers.",
-          variant: "destructive",
-        });
+        console.error("Error fetching parking spaces:", error);
+        toast.error("Failed to fetch parking spaces.");
       }
     })();
   }, []);
@@ -83,18 +77,11 @@ export default function NewParkingSpotPage() {
     try {
       const res = await services.parkingServices.createParkingSpot(formData);
 
-      toast({
-        title: "Parking spot created",
-        description: "The parking spot has been successfully created.",
-      });
+      toast.success("Parking spot created successfully!");
 
       router.push("/dashboard/parking-spots");
     } catch (error) {
-      toast({
-        title: "Failed to create parking spot",
-        description: "An error occurred while creating the parking spot.",
-        variant: "destructive",
-      });
+      toast.error("An error occurred while creating the parking spot.");
     } finally {
       setIsLoading(false);
     }

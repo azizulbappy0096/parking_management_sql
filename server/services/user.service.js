@@ -1,6 +1,36 @@
 const { StatusCodes } = require("http-status-codes");
 const db = require("../utils/db");
 
+const loginUser = async (email, password) => {
+  try {
+    const [rows] = await db.execute(
+      `SELECT user_id, name, email, role FROM users WHERE email = ? and password = ?`,
+      [email, password]
+    );
+
+    if (rows.length === 0) {
+      const err = new Error("Invalid email or password");
+      err.code = StatusCodes.UNAUTHORIZED;
+      err.status = "UNAUTHORIZED";
+      throw err;
+    }
+
+    const user = rows[0];
+
+    // if (user.password !== password) {
+    //   const err = new Error("Invalid email or password");
+    //   err.code = StatusCodes.UNAUTHORIZED;
+    //   err.status = "UNAUTHORIZED";
+    //   throw err;
+    // }
+
+    return user;
+  } catch (err) {
+    throw err;
+  }
+};
+
+// administrator can register a new user
 const registerUser = async (userData) => {
   const { name, email, password, address, phone_num, role } = userData;
   try {
@@ -44,4 +74,5 @@ const getAllManagers = async () => {
 module.exports = {
   registerUser,
   getAllManagers,
+  loginUser,
 };

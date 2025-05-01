@@ -1,18 +1,19 @@
 import axios from "@/lib/axios";
 
-const userServices = {
-  getAllManager: async () => {
+const slipService = {
+  getAllPSlips: async (params) => {
     const res = await axios({
       method: "get",
-      url: "/users/managers",
+      url: "/slips",
+      params,
     });
 
     return res.data;
   },
-  login: async (data) => {
+  checkin: async (data) => {
     const res = await axios({
       method: "post",
-      url: "/users/login",
+      url: "/slips//create",
       data,
     });
 
@@ -20,4 +21,4 @@ const userServices = {
   },
 };
 
-export default userServices;
+export default slipService;

@@ -21,6 +21,10 @@ function errorResponse(
   status = "INTERNAL_SERVER_ERROR",
   details = []
 ) {
+  if (!code || typeof code !== "number" || code < 100 || code > 599) {
+    code = 500;
+  }
+
   return res.status(code).json({
     success: false,
     code,

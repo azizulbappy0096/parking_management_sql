@@ -4,8 +4,9 @@ const { successResponse } = require("../utils/response");
 const parkingServices = require("../services/parking.service");
 
 const getAllParkingSpaces = async (req, res, next) => {
+  const { mngr_id } = req.query;
   try {
-    const spaces = await parkingServices.getAllParkingSpaces();
+    const spaces = await parkingServices.getAllParkingSpaces(mngr_id);
 
     successResponse(
       res,
@@ -83,8 +84,9 @@ const deleteParkingSpace = async (req, res, next) => {
 };
 
 const getAllParkingSpots = async (req, res, next) => {
+  const { mngr_id } = req.query;
   try {
-    const spots = await parkingServices.getAllParkingSpots();
+    const spots = await parkingServices.getAllParkingSpots(mngr_id);
 
     successResponse(
       res,
@@ -159,6 +161,54 @@ const deleteParkingSpot = async (req, res, next) => {
   }
 };
 
+const getParkingSpotsBySpaceId = async (req, res, next) => {
+  const { space_id } = req.params;
+  try {
+    const spots = await parkingServices.getParkingSpotsBySpaceId(space_id);
+
+    successResponse(
+      res,
+      "Parking spots fetched successfully",
+      { spots },
+      StatusCodes.OK
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getParkingSpaceById = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const space = await parkingServices.getParkingSpaceById(id);
+
+    successResponse(
+      res,
+      "Parking space fetched successfully",
+      { space },
+      StatusCodes.OK
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getParkingSpotById = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const spot = await parkingServices.getParkingSpotById(id);
+
+    successResponse(
+      res,
+      "Parking spot fetched successfully",
+      { spot },
+      StatusCodes.OK
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getAllParkingSpaces,
   createParkingSpace,
@@ -169,4 +219,9 @@ module.exports = {
   createParkingSpot,
   updateParkingSpot,
   deleteParkingSpot,
+
+  getParkingSpotsBySpaceId,
+
+  getParkingSpaceById,
+  getParkingSpotById,
 };

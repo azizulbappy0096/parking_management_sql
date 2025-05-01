@@ -27,52 +27,55 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Import the styles
+import { useToast } from "@/hooks/use-toast";
 
-import { useGlobalContext } from "@/components/GlobalContext";
+// Initial mock data for slips
+const initialSlips = [
+  {
+    slip_id: 1,
+    ve_numberplate: "A1",
+    driver_name: "123",
+    driver_phone: "1234567890",
+    spot_name: "Spot A",
+    space_type: "Downtown Garage",
+    total_amount: "123",
+  },
+];
 
-// Mock data for parking spots
-const initialParkingSpots = [];
-
-export default function ParkingSpotsPage() {
-  const { user } = useGlobalContext();
-
-  const [parkingSpots, setParkingSpots] = useState(initialParkingSpots);
+export default function SlipsPage() {
+  const [slips, setSlips] = useState(initialSlips);
   const [searchQuery, setSearchQuery] = useState("");
+  const { toast } = useToast();
 
   useEffect(() => {
     (async () => {
       try {
-        let params = {
-          mngr_id: user?.user_id,
-        };
-        const response = await services.parkingServices.getAllParkingSpots(
-          params
-        );
-        setParkingSpots(response.data.spots);
+        const response = await services.slipServices.getAllPSlips();
+        setSlips(response.data.slips);
       } catch (error) {
-        console.error("Error fetching parking spots:", error);
-        toast.error("Failed to fetch parking spots.");
+        console.error("Error fetching slips:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch slips.",
+          variant: "destructive",
+        });
       }
     })();
   }, []);
 
-  const filteredSpots = parkingSpots.filter(
-    (spot) =>
-      spot.spot_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      spot.space_type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      spot.status.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredSlips = slips.filter(
+    (slip) =>
+      slip.spot_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      slip.space_type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      slip.driver_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      slip.ve_numberplate.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleDelete = async (spotId: number) => {
-    try {
-      await services.parkingServices.deleteParkingSpotById(spotId);
-      setParkingSpots(parkingSpots.filter((spot) => spot.spot_id !== spotId));
-      toast.success("The parking spot has been successfully deleted.");
-    } catch (err) {
-      toast.error(err.message);
-    }
+  const handleDelete = (slipId: number) => {
+    toast({
+      title: "Slip deleted",
+      description: "The slip has been successfully deleted.",
+    });
   };
 
   const getStatusColor = (status: string) => {
@@ -92,27 +95,25 @@ export default function ParkingSpotsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Parking Spots</h2>
-          <p className="text-muted-foreground">Manage your parking spots</p>
+          <h2 className="text-3xl font-bold tracking-tight">Slips</h2>
+          <p className="text-muted-foreground">Manage your slips</p>
         </div>
         <Button asChild>
-          <Link href="/dashboard/parking-spots/new">
-            <Plus className="mr-2 h-4 w-4" /> Add Parking Spot
+          <Link href="/dashboard/slips/new">
+            <Plus className="mr-2 h-4 w-4" /> Add Slip
           </Link>
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>All Parking Spots</CardTitle>
-          <CardDescription>
-            View and manage all your parking spots
-          </CardDescription>
+          <CardTitle>All Slips</CardTitle>
+          <CardDescription>View and manage all your slips</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="mb-4">
             <Input
-              placeholder="Search parking spots..."
+              placeholder="Search slips..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="max-w-sm"
@@ -123,32 +124,36 @@ export default function ParkingSpotsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>ID</TableHead>
+                  <TableHead>Number Plate</TableHead>
+                  <TableHead>Driver Name</TableHead>
+                  <TableHead>Driver Phone</TableHead>
                   <TableHead>Spot Name</TableHead>
-                  <TableHead>Parking Space</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Space Type</TableHead>
+                  <TableHead>Total Amount</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredSpots.length === 0 ? (
+                {filteredSlips.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">
-                      No parking spots found.
+                    <TableCell colSpan={8} className="h-24 text-center">
+                      No slips found.
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredSpots.map((spot) => (
-                    <TableRow key={spot.spot_id}>
-                      <TableCell>{spot.spot_id}</TableCell>
-                      <TableCell>{spot.spot_name}</TableCell>
-                      <TableCell>{spot.space_type}</TableCell>
+                  filteredSlips.map((slip) => (
+                    <TableRow key={slip.slip_id}>
+                      <TableCell>{slip.slip_id}</TableCell>
+                      <TableCell>{slip.ve_numberplate}</TableCell>
+                      <TableCell>{slip.driver_name}</TableCell>
+                      <TableCell>{slip.driver_phone}</TableCell>
+                      <TableCell>{slip.spot_name}</TableCell>
+                      <TableCell>{slip.space_type}</TableCell>
                       <TableCell>
                         <span
-                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(
-                            spot.status
-                          )}`}
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium`}
                         >
-                          {spot.status}
+                          {slip.total_amount}
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
@@ -161,15 +166,20 @@ export default function ParkingSpotsPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
+                              <Link href={`/dashboard/slips/${slip.slip_id}`}>
+                                View Details
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
                               <Link
-                                href={`/dashboard/parking-spots/${spot.spot_id}/edit`}
+                                href={`/dashboard/slips/${slip.slip_id}/edit`}
                               >
                                 <Edit className="mr-2 h-4 w-4" /> Edit
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               className="text-destructive focus:text-destructive"
-                              onClick={() => handleDelete(spot.spot_id)}
+                              onClick={() => handleDelete(slip.slip_id)}
                             >
                               <Trash className="mr-2 h-4 w-4" /> Delete
                             </DropdownMenuItem>

@@ -47,11 +47,24 @@ const DriverModel = `CREATE TABLE IF NOT EXISTS drivers (
   driver_address VARCHAR(255)
 );`;
 
+const SlipModel = `CREATE TABLE IF NOT EXISTS parking_slip (
+  slip_id INT AUTO_INCREMENT PRIMARY KEY,
+  type VARCHAR(50) NOT NULL,
+  duration INT NOT NULL, 
+  issue_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+  ve_numberplate VARCHAR(20) NOT NULL,
+  spot_id INT NOT NULL,
+  total_amount DECIMAL(10,2) NOT NULL,
+  FOREIGN KEY (ve_numberplate) REFERENCES vehicles(ve_numberplate) ON DELETE CASCADE,
+  FOREIGN KEY (spot_id) REFERENCES parking_spots(spot_id) ON DELETE CASCADE
+);
+`;
+
 module.exports = {
   UserModel,
   ParkingSpaceModel,
   ParkingSpotModel,
-  RateModel,
   VehicleModel,
   DriverModel,
+  SlipModel,
 };

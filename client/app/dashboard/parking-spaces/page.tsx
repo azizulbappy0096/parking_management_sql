@@ -27,7 +27,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useToast } from "@/hooks/use-toast";
+import { ToastContainer, toast } from "react-toastify"; // Import ToastContainer and toast
+import "react-toastify/dist/ReactToastify.css"; // Import the CSS for toast notifications
+import { useGlobalContext } from "@/components/GlobalContext";
 
 // Mock data for parking spaces
 const initialParkingSpaces = [
@@ -44,25 +46,26 @@ const initialParkingSpaces = [
 ];
 
 export default function ParkingSpacesPage() {
+  const { user } = useGlobalContext();
   const [parkingSpaces, setParkingSpaces] = useState(initialParkingSpaces);
   const [searchQuery, setSearchQuery] = useState("");
-  const { toast } = useToast();
 
   useEffect(() => {
     (async () => {
       try {
-        const response = await services.parkingServices.getAllParkingSpaces();
+        let params = {
+          mngr_id: user?.user_id,
+        };
+        const response = await services.parkingServices.getAllParkingSpaces(
+          params
+        );
         setParkingSpaces(response.data.spaces);
       } catch (error) {
         console.error("Error fetching parking spaces:", error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch parking spaces.",
-          variant: "destructive",
-        });
+        toast.error("Failed to fetch parking spaces."); // Use react-toastify's error toast
       }
     })();
-  }, []);
+  }, [user?.user_id]);
 
   const filteredSpaces = parkingSpaces.filter(
     (space) =>
@@ -71,14 +74,16 @@ export default function ParkingSpacesPage() {
       space?.manager_name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleDelete = (spaceId: number) => {
-    setParkingSpaces(
-      parkingSpaces.filter((space) => space.space_id !== spaceId)
-    );
-    toast({
-      title: "Parking space deleted",
-      description: "The parking space has been successfully deleted.",
-    });
+  const handleDelete = async (spaceId: number) => {
+    try {
+      await services.parkingServices.deleteParkingSpaceById(spaceId);
+      setParkingSpaces(
+        parkingSpaces.filter((space) => space.space_id !== spaceId)
+      );
+      toast.success("Parking space has been successfully deleted."); // Success toast
+    } catch (err) {
+      toast.error("Something went wrong");
+    }
   };
 
   return (
@@ -151,13 +156,6 @@ export default function ParkingSpacesPage() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem asChild>
-                              <Link
-                                href={`/dashboard/parking-spaces/${space.space_id}`}
-                              >
-                                View Details
-                              </Link>
-                            </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                               <Link
                                 href={`/dashboard/parking-spaces/${space.space_id}/edit`}

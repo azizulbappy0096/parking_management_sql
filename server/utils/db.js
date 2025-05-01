@@ -45,7 +45,7 @@ connection.query(
         await db.query(models.VehicleModel);
         await db.query(models.ParkingSpaceModel);
         await db.query(models.ParkingSpotModel);
-        await db.query(models.RateModel);
+        await db.query(models.SlipModel);
         console.log("✅ All tables ensured.");
       } catch (err) {
         console.error("❌ Error ensuring tables:", err.message);

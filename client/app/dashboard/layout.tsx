@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Car,
   ChevronDown,
@@ -16,20 +16,31 @@ import {
   ParkingSquare,
   User,
   X,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { cn } from "@/lib/utils"
-import { useMobile } from "@/hooks/use-mobile"
+  Contact,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
+import { useMobile } from "@/hooks/use-mobile";
+import { useGlobalContext } from "@/components/GlobalContext";
 
 interface DashboardLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const pathname = usePathname()
-  const isMobile = useMobile()
-  const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname();
+  const router = useRouter();
+  const isMobile = useMobile();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const { user, loading } = useGlobalContext();
+
+  useEffect(() => {
+    if (!user && !loading) {
+      router.replace("/login?redirect=" + pathname);
+    }
+  }, [user]);
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -51,13 +62,23 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         { name: "Add Spot", href: "/dashboard/parking-spots/new" },
       ],
     },
+    {
+      name: "Generate Slip",
+      href: "/dashboard/slips",
+      icon: ClipboardList,
+      submenu: [
+        { name: "All Slips", href: "/dashboard/slips" },
+        { name: "Create Slip", href: "/dashboard/slips/new" },
+      ],
+    },
     { name: "Vehicles", href: "/dashboard/vehicles", icon: Car },
-    { name: "Generate Slip", href: "/dashboard/slips/new", icon: ClipboardList },
-  ]
+    { name: "Drivers", href: "/dashboard/drivers", icon: Contact },
+  ];
 
   const NavItem = ({ item, mobile = false }) => {
-    const [submenuOpen, setSubmenuOpen] = useState(false)
-    const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
+    const [submenuOpen, setSubmenuOpen] = useState(false);
+    const isActive =
+      pathname === item.href || pathname.startsWith(item.href + "/");
 
     return (
       <div className="w-full">
@@ -66,7 +87,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             href={item.href}
             className={cn(
               "flex h-10 w-full items-center rounded-md px-3 text-sm font-medium",
-              isActive ? "bg-primary text-primary-foreground" : "hover:bg-muted",
+              isActive ? "bg-primary text-primary-foreground" : "hover:bg-muted"
             )}
             onClick={() => mobile && setIsOpen(false)}
           >
@@ -80,7 +101,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               className="ml-auto h-8 w-8"
               onClick={() => setSubmenuOpen(!submenuOpen)}
             >
-              <ChevronDown className={cn("h-4 w-4 transition-transform", submenuOpen && "rotate-180")} />
+              <ChevronDown
+                className={cn(
+                  "h-4 w-4 transition-transform",
+                  submenuOpen && "rotate-180"
+                )}
+              />
             </Button>
           )}
         </div>
@@ -93,7 +119,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 href={subitem.href}
                 className={cn(
                   "flex h-8 items-center rounded-md px-3 text-sm font-medium",
-                  pathname === subitem.href ? "bg-primary text-primary-foreground" : "hover:bg-muted",
+                  pathname === subitem.href
+                    ? "bg-primary text-primary-foreground"
+                    : "hover:bg-muted"
                 )}
                 onClick={() => mobile && setIsOpen(false)}
               >
@@ -103,8 +131,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
         )}
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -122,7 +150,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 <SheetContent side="left" className="w-64 p-0">
                   <div className="flex h-16 items-center border-b px-4">
                     <h2 className="text-lg font-semibold">ParkEase</h2>
-                    <Button variant="ghost" size="icon" className="ml-auto" onClick={() => setIsOpen(false)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="ml-auto"
+                      onClick={() => setIsOpen(false)}
+                    >
                       <X className="h-5 w-5" />
                     </Button>
                   </div>
@@ -162,5 +195,5 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <main className="flex-1 p-6">{children}</main>
       </div>
     </div>
-  )
+  );
 }
